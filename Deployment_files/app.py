@@ -11,7 +11,7 @@ st.write("Welcome to the Coursera Course Recommendation System. I'm here to make
 # Load the data
 @st.cache_data
 def load_data():
-    return pd.read_csv("../Dataset/coursea_data.csv")
+    return pd.read_csv("./Dataset/coursea_data.csv")
 
 data_load_state = st.text('Loading data...')
 data = load_data()
