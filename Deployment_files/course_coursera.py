@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # %%
 # Load the data
-data = pd.read_csv("coursea_data.csv")
+data = pd.read_csv("../Dataset/coursea_data.csv")
 data.head()
 
 
