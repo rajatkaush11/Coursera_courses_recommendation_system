@@ -5,26 +5,41 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
-st.set_page_config(page_title="Coursera Course Recommendation System", page_icon="📘")
-st.title("Coursera Course Recommendation System")
+st.set_page_config(page_title=" Coursera Course Recommendation System", page_icon="📘")
+st.title("Coursera  Course Recommendation System ")
 st.markdown(
     """
     <style>
         body {
-            background-color: #f0f2f6;
+            background-color: #333333;
         }
         .big-font {
-            font-size: 24px !important;
+            font-size: 30px !important;
+            font-weight: bold !important;
+            color: #3366ff !important;
+            text-align: center !important;
+            margin-bottom: 20px !important;
+        }
+        .sub-header {
+            font-size: 22px !important;
+            font-weight: bold !important;
+            color: #3366ff !important;
+            margin-bottom: 10px !important;
+        }
+        .content-text {
+            font-size: 18px !important;
+            color: #333333 !important;
+            margin-bottom: 10px !important;
         }
         .highlight {
-            color: #3366ff;
+            color: #3366ff !important;
         }
     </style>
     """,
     unsafe_allow_html=True
 )
 st.markdown(
-    "<p class='big-font'>Welcome to the Coursera Course Recommendation System. I'm here to make your life easy in finding your required courses.</p>",
+    "<p class='big-font'>Welcome to the <br> Coursera Course Recommendation System </br> &nbsp;Let me be your guide in discovering the perfect courses to elevate your learning journey. </p>",
     unsafe_allow_html=True
 )
 
@@ -91,23 +106,9 @@ def recommend(subject, rating, difficulty, num_recommendations=5):
 
     return recommended_courses
 
-# Example Recommendation
-example_subject = "Data Science"
-example_rating = 4.5
-example_difficulty = "Intermediate"
-example_recommended_courses = recommend(example_subject, example_rating, example_difficulty)
-if example_recommended_courses:
-    st.subheader("Example Recommendation:")
-    for i, course in enumerate(example_recommended_courses, 1):
-        st.write(f"{i}. Course Title: {course['Course Title']}")
-        st.write(f"   Organization: {course['Organization']}")
-        st.write(f"   Certificate Type: {course['Certificate Type']}")
-        st.write(f"   Rating: {course['Rating']}")
-        st.write(f"   Students Enrolled: {course['Students Enrolled']}")
-        st.write(f"   Similarity: {course['Similarity']}")
-
 # Main content area for user input
 st.subheader("Custom Recommendation:")
+st.markdown("<p class='content-text'>Please provide your preferences below:</p>", unsafe_allow_html=True)
 subject = st.text_input("Enter your interest (subject): ")
 rating = st.slider("Enter desired rating (0-5): ", 0.0, 5.0, 3.0, 0.1)
 difficulty = st.selectbox("Enter desired difficulty level:", ['Beginner', 'Intermediate', 'Advanced', 'Mixed'])
