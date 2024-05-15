@@ -14,14 +14,14 @@ st.markdown(
             background-color: #f0f2f6;
         }
         .big-font {
-            font-size: 32px !important;
+            font-size: 30px !important;
             font-weight: bold !important;
             color: #3366ff !important;
             text-align: center !important;
             margin-bottom: 20px !important;
         }
         .sub-header {
-            font-size: 24px !important;
+            font-size: 22px !important;
             font-weight: bold !important;
             color: #333333 !important;
             margin-bottom: 10px !important;
