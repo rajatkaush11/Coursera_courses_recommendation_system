@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.metrics import accuracy_score
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
@@ -25,14 +24,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.markdown(
-    "<p class='big-font'>Welcome to the Coursera Course Recommendation System. Let me be your guide in discovering the perfect courses to elevate your learning journey.</p>",
+    "<p class='big-font'>Welcome to the Coursera Course Recommendation System. I'm here to make your life easy in finding your required courses.</p>",
     unsafe_allow_html=True
 )
 
 # Load the data
 @st.cache_data
 def load_data():
-    return pd.read_csv("./Dataset/coursea_data.csv")
+    return pd.read_csv("coursea_data.csv")
 
 data_load_state = st.text('Loading data...')
 data = load_data()
@@ -55,7 +54,7 @@ X = scaler.fit_transform(X)
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Function to recommend courses
+# Recommendation Function
 def recommend(subject, rating, difficulty, num_recommendations=5):
     # Find courses related to the subject
     relevant_courses = data[data['course_title'].str.contains(subject, case=False)]
@@ -92,6 +91,21 @@ def recommend(subject, rating, difficulty, num_recommendations=5):
 
     return recommended_courses
 
+# Example Recommendation
+example_subject = "Data Science"
+example_rating = 4.5
+example_difficulty = "Intermediate"
+example_recommended_courses = recommend(example_subject, example_rating, example_difficulty)
+if example_recommended_courses:
+    st.subheader("Example Recommendation:")
+    for i, course in enumerate(example_recommended_courses, 1):
+        st.write(f"{i}. Course Title: {course['Course Title']}")
+        st.write(f"   Organization: {course['Organization']}")
+        st.write(f"   Certificate Type: {course['Certificate Type']}")
+        st.write(f"   Rating: {course['Rating']}")
+        st.write(f"   Students Enrolled: {course['Students Enrolled']}")
+        st.write(f"   Similarity: {course['Similarity']}")
+
 # Main content area for user input
 st.subheader("Custom Recommendation:")
 subject = st.text_input("Enter your interest (subject): ")
@@ -109,12 +123,3 @@ if st.button('Recommend'):
             st.write(f"   Rating: {course['Rating']}")
             st.write(f"   Students Enrolled: {course['Students Enrolled']}")
             st.write(f"   Similarity: {course['Similarity']}")
-
-# Evaluate accuracy
-labeled_data = pd.read_csv("labeled_data.csv")  # Assuming you have a labeled dataset
-X_test = labeled_data[['course_difficulty', 'course_rating', 'course_students_enrolled']]
-y_test = labeled_data['course_title']
-X_test = scaler.transform(X_test)
-predictions = model.predict(X_test)
-accuracy = accuracy_score(y_test, predictions)
-st.write("Model Accuracy:", accuracy)
