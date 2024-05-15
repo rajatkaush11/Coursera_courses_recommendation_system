@@ -31,7 +31,7 @@ st.markdown(
 # Load the data
 @st.cache_data
 def load_data():
-    return pd.read_csv("coursea_data.csv")
+    return pd.read_csv("./Dataset/coursea_data.csv")
 
 data_load_state = st.text('Loading data...')
 data = load_data()
