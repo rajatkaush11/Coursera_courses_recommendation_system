@@ -39,7 +39,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.markdown(
-    "<p class='big-font'>Welcome to the <br> Coursera Course Recommendation System </br> <br> Let me be your guide in discovering the perfect courses to elevate your learning journey. </br></p>",
+    "<p class='big-font'>Welcome to the <br> Coursera Course Recommendation System </br> Let me be your guide in discovering the perfect courses to elevate your learning journey. </p>",
     unsafe_allow_html=True
 )
 
