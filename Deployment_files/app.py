@@ -11,7 +11,7 @@ st.markdown(
     """
     <style>
         body {
-            background-color: #f0f2f6;
+            background-color: #333333;
         }
         .big-font {
             font-size: 30px !important;
@@ -23,7 +23,7 @@ st.markdown(
         .sub-header {
             font-size: 22px !important;
             font-weight: bold !important;
-            color: #333333 !important;
+            color: #3366ff !important;
             margin-bottom: 10px !important;
         }
         .content-text {
