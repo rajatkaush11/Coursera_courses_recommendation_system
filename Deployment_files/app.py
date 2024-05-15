@@ -5,8 +5,8 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
-st.set_page_config(page_title=" <br>Coursera </br> Course Recommendation System", page_icon="📘")
-st.title("Coursera Course Recommendation System")
+st.set_page_config(page_title=" Coursera Course Recommendation System", page_icon="📘")
+st.title("<br>Coursera</br> Course Recommendation System")
 st.markdown(
     """
     <style>
