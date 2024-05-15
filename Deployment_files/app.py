@@ -114,13 +114,16 @@ rating = st.slider("Enter desired rating (0-5): ", 0.0, 5.0, 3.0, 0.1)
 difficulty = st.selectbox("Enter desired difficulty level:", ['Beginner', 'Intermediate', 'Advanced', 'Mixed'])
 
 if st.button('Recommend'):
-    recommended_courses = recommend(subject, rating, difficulty)
-    if recommended_courses:
-        st.subheader("Recommendations:")
-        for i, course in enumerate(recommended_courses, 1):
-            st.write(f"{i}. Course Title: {course['Course Title']}")
-            st.write(f"   Organization: {course['Organization']}")
-            st.write(f"   Certificate Type: {course['Certificate Type']}")
-            st.write(f"   Rating: {course['Rating']}")
-            st.write(f"   Students Enrolled: {course['Students Enrolled']}")
-            st.write(f"   Similarity: {course['Similarity']}")
+    if not subject:
+        st.error("Please write your interest to get recommendations.")
+    else:
+        recommended_courses = recommend(subject, rating, difficulty)
+        if recommended_courses:
+            st.subheader("Recommendations:")
+            for i, course in enumerate(recommended_courses, 1):
+                st.write(f"{i}. Course Title: {course['Course Title']}")
+                st.write(f"   Organization: {course['Organization']}")
+                st.write(f"   Certificate Type: {course['Certificate Type']}")
+                st.write(f"   Rating: {course['Rating']}")
+                st.write(f"   Students Enrolled: {course['Students Enrolled']}")
+                st.write(f"   Similarity: {course['Similarity']}")
