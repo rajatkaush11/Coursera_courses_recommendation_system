@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
@@ -52,58 +51,27 @@ data_load_state = st.text('Loading data...')
 data = load_data()
 data_load_state.text('Data loading done!')
 
-# Feature Engineering
-label_encoders = {}
-for column in ['course_difficulty', 'course_Certificate_type']:
-    label_encoders[column] = LabelEncoder()
-    data[column] = label_encoders[column].fit_transform(data[column])
-
-# Convert 'course_students_enrolled' to numeric, handling 'k' and 'm' suffixes
-data['course_students_enrolled'] = data['course_students_enrolled'].replace({'k': '*1e3', 'm': '*1e6'}, regex=True).map(pd.eval).astype(float)
-
-# Train the model
-X = data[['course_difficulty', 'course_rating', 'course_students_enrolled']]
-y = data['course_title']
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-model = RandomForestClassifier()
-model.fit(X, y)
+# TF-IDF Vectorization
+tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf_vectorizer.fit_transform(data['course_title'])
 
 # Recommendation Function
 def recommend(subject, rating, difficulty, num_recommendations=5):
-    # Find courses related to the subject
-    relevant_courses = data[data['course_title'].str.contains(subject, case=False)]
-    relevant_indices = relevant_courses.index
+    # TF-IDF Vectorization for user input subject
+    input_tfidf = tfidf_vectorizer.transform([subject])
     
-    # Filter the feature matrix X to include only relevant courses
-    X_relevant = X[relevant_indices]
+    # Combine user input with other preferences
+    preferences = [f"Rating: {rating}", f"Difficulty: {difficulty}"]
+    input_text = " ".join(preferences)
+    input_tfidf = tfidf_vectorizer.transform([input_text])
     
-    # Encode difficulty level
-    difficulty_encoded = label_encoders['course_difficulty'].transform([difficulty])[0]
+    # Calculate cosine similarity
+    similarity_scores = cosine_similarity(input_tfidf, tfidf_matrix)
     
-    # Scale numerical variables
-    input_data = scaler.transform([[difficulty_encoded, rating, 0]])  # Set students enrolled to 0
+    # Get top recommendations
+    top_indices = similarity_scores.argsort()[0][-num_recommendations:][::-1]
+    recommended_courses = data.iloc[top_indices]
     
-    # Predict courses
-    predictions = model.predict_proba(input_data)
-    
-    # Find similar courses
-    similarity = cosine_similarity(X_relevant, input_data)
-    top_indices = similarity.flatten().argsort()[::-1][:num_recommendations]
-    
-    # Collect recommended courses information in a list
-    recommended_courses = []
-    for index in top_indices:
-        course = relevant_courses.iloc[index]
-        recommended_courses.append({
-            "Course Title": course['course_title'],
-            "Organization": course['course_organization'],
-            "Certificate Type": label_encoders['course_Certificate_type'].inverse_transform([course['course_Certificate_type']])[0],
-            "Rating": course['course_rating'],
-            "Students Enrolled": course['course_students_enrolled'],
-            "Similarity": similarity[index][0]
-        })
-
     return recommended_courses
 
 # Main content area for user input
@@ -115,12 +83,11 @@ difficulty = st.selectbox("Enter desired difficulty level:", ['Beginner', 'Inter
 
 if st.button('Recommend'):
     recommended_courses = recommend(subject, rating, difficulty)
-    if recommended_courses:
+    if not recommended_courses.empty:
         st.subheader("Recommendations:")
-        for i, course in enumerate(recommended_courses, 1):
-            st.write(f"{i}. Course Title: {course['Course Title']}")
-            st.write(f"   Organization: {course['Organization']}")
-            st.write(f"   Certificate Type: {course['Certificate Type']}")
-            st.write(f"   Rating: {course['Rating']}")
-            st.write(f"   Students Enrolled: {course['Students Enrolled']}")
-            st.write(f"   Similarity: {course['Similarity']}")
+        for i, course in recommended_courses.iterrows():
+            st.write(f"{i + 1}. Course Title: {course['course_title']}")
+            st.write(f"   Organization: {course['course_organization']}")
+            st.write(f"   Certificate Type: {course['course_Certificate_type']}")
+            st.write(f"   Rating: {course['course_rating']}")
+            st.write(f"   Students Enrolled: {course['course_students_enrolled']}")
