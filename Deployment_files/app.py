@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.metrics import accuracy_score
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
@@ -54,7 +55,7 @@ X = scaler.fit_transform(X)
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Recommendation Function
+# Function to recommend courses
 def recommend(subject, rating, difficulty, num_recommendations=5):
     # Find courses related to the subject
     relevant_courses = data[data['course_title'].str.contains(subject, case=False)]
@@ -108,3 +109,12 @@ if st.button('Recommend'):
             st.write(f"   Rating: {course['Rating']}")
             st.write(f"   Students Enrolled: {course['Students Enrolled']}")
             st.write(f"   Similarity: {course['Similarity']}")
+
+# Evaluate accuracy
+labeled_data = pd.read_csv("labeled_data.csv")  # Assuming you have a labeled dataset
+X_test = labeled_data[['course_difficulty', 'course_rating', 'course_students_enrolled']]
+y_test = labeled_data['course_title']
+X_test = scaler.transform(X_test)
+predictions = model.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+st.write("Model Accuracy:", accuracy)
