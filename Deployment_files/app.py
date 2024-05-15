@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
 st.set_page_config(page_title=" Coursera Course Recommendation System", page_icon="📘")
-st.title("Coursera <br> Course Recommendation System  </br>")
+st.title("Coursera  Course Recommendation System ")
 st.markdown(
     """
     <style>
