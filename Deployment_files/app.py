@@ -72,7 +72,10 @@ def recommend(subject, rating, difficulty, num_recommendations=5):
     top_indices = similarity_scores.argsort()[0][-num_recommendations:][::-1]
     recommended_courses = data.iloc[top_indices]
     
-    return recommended_courses
+    # Calculate similarity score percentage
+    similarity_scores = similarity_scores[0][top_indices] * 100
+    
+    return recommended_courses, similarity_scores
 
 # Main content area for user input
 st.subheader("Custom Recommendation:")
@@ -82,12 +85,13 @@ rating = st.slider("Enter desired rating (0-5): ", 0.0, 5.0, 3.0, 0.1)
 difficulty = st.selectbox("Enter desired difficulty level:", ['Beginner', 'Intermediate', 'Advanced', 'Mixed'])
 
 if st.button('Recommend'):
-    recommended_courses = recommend(subject, rating, difficulty)
+    recommended_courses, similarity_scores = recommend(subject, rating, difficulty)
     if not recommended_courses.empty:
         st.subheader("Recommendations:")
-        for i, course in recommended_courses.iterrows():
-            st.write(f"{i + 1}. Course Title: {course['course_title']}")
+        for i, (index, course) in enumerate(recommended_courses.iterrows(), 1):
+            st.write(f"{i}. Course Title: {course['course_title']}")
             st.write(f"   Organization: {course['course_organization']}")
             st.write(f"   Certificate Type: {course['course_Certificate_type']}")
             st.write(f"   Rating: {course['course_rating']}")
             st.write(f"   Students Enrolled: {course['course_students_enrolled']}")
+            st.write(f"   Similarity Score: {similarity_scores[i-1]:.2f}%")
