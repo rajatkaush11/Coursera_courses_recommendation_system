@@ -71,7 +71,7 @@ model = RandomForestClassifier()
 model.fit(X, y)
 
 # Model Accuracy Calculation
-cv_scores = cross_val_score(model, X, y, cv=5)
+cv_scores = cross_val_score(model, X, y, cv=len(data))
 mean_accuracy = cv_scores.mean()
 
 # Recommendation Function
