@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, LeaveOneOut
 
 # Title and Description with Styling
 st.set_page_config(page_title="Coursera Course Recommendation System", page_icon="📘")
@@ -72,7 +72,11 @@ model.fit(X, y)
 
 # Model Accuracy Calculation
 cv_splits = min(len(data), 5)  # Set number of splits to minimum of 5 or number of samples in the dataset
-cv_scores = cross_val_score(model, X, y, cv=cv_splits)
+if cv_splits < 2:
+    cv = LeaveOneOut()
+else:
+    cv = cv_splits
+cv_scores = cross_val_score(model, X, y, cv=cv)
 mean_accuracy = cv_scores.mean()
 
 # Recommendation Function
