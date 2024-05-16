@@ -71,7 +71,8 @@ model = RandomForestClassifier()
 model.fit(X, y)
 
 # Model Accuracy Calculation
-cv_scores = cross_val_score(model, X, y, cv=len(data))
+cv_splits = min(len(data), 5)  # Set number of splits to minimum of 5 or number of samples in the dataset
+cv_scores = cross_val_score(model, X, y, cv=cv_splits)
 mean_accuracy = cv_scores.mean()
 
 # Recommendation Function
