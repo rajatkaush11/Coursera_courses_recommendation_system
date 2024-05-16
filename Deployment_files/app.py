@@ -1,13 +1,14 @@
+main code 
+
 import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import cross_val_score, LeaveOneOut
 
 # Title and Description with Styling
-st.set_page_config(page_title="Coursera Course Recommendation System", page_icon="📘")
-st.title("Coursera Course Recommendation System ")
+st.set_page_config(page_title=" Coursera Course Recommendation System", page_icon="📘")
+st.title("Coursera  Course Recommendation System ")
 st.markdown(
     """
     <style>
@@ -70,15 +71,6 @@ X = scaler.fit_transform(X)
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Model Accuracy Calculation
-cv_splits = min(len(data), 5)  # Set number of splits to minimum of 5 or number of samples in the dataset
-if cv_splits < 2:
-    cv = LeaveOneOut()
-else:
-    cv = cv_splits
-cv_scores = cross_val_score(model, X, y, cv=cv)
-mean_accuracy = cv_scores.mean()
-
 # Recommendation Function
 def recommend(subject, rating, difficulty, num_recommendations=5):
     # Find courses related to the subject
@@ -124,20 +116,13 @@ rating = st.slider("Enter desired rating (0-5): ", 0.0, 5.0, 3.0, 0.1)
 difficulty = st.selectbox("Enter desired difficulty level:", ['Beginner', 'Intermediate', 'Advanced', 'Mixed'])
 
 if st.button('Recommend'):
-    if not subject:
-        st.error("Please write your interest to get recommendations.")
-    else:
-        recommended_courses = recommend(subject, rating, difficulty)
-        if recommended_courses:
-            st.subheader("Recommendations:")
-            for i, course in enumerate(recommended_courses, 1):
-                st.write(f"{i}. Course Title: {course['Course Title']}")
-                st.write(f"   Organization: {course['Organization']}")
-                st.write(f"   Certificate Type: {course['Certificate Type']}")
-                st.write(f"   Rating: {course['Rating']}")
-                st.write(f"   Students Enrolled: {course['Students Enrolled']}")
-                st.write(f"   Similarity: {course['Similarity']}")
-            
-            # Display model accuracy after recommendations
-            st.subheader("Model Accuracy:")
-            st.write(f"The mean accuracy of the model is: {mean_accuracy:.2%}")
+    recommended_courses = recommend(subject, rating, difficulty)
+    if recommended_courses:
+        st.subheader("Recommendations:")
+        for i, course in enumerate(recommended_courses, 1):
+            st.write(f"{i}. Course Title: {course['Course Title']}")
+            st.write(f"   Organization: {course['Organization']}")
+            st.write(f"   Certificate Type: {course['Certificate Type']}")
+            st.write(f"   Rating: {course['Rating']}")
+            st.write(f"   Students Enrolled: {course['Students Enrolled']}")
+            st.write(f"   Similarity: {course['Similarity']}")
