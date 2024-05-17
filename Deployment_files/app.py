@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Title and Description with Styling
 st.set_page_config(page_title="Coursera Course Recommendation System", page_icon="📘")
@@ -72,6 +73,10 @@ model.fit(X, y)
 def recommend(subject, rating, difficulty, num_recommendations=5):
     # Find courses related to the subject
     relevant_courses = data[data['course_title'].str.contains(subject, case=False)]
+    
+    if relevant_courses.empty:
+        return []
+
     relevant_indices = relevant_courses.index
     
     # Encode difficulty level
@@ -80,33 +85,28 @@ def recommend(subject, rating, difficulty, num_recommendations=5):
     # Scale numerical variables
     input_data = scaler.transform([[difficulty_encoded, rating, 0]])  # Set students enrolled to 0
     
-    # Predict probabilities for relevant courses
-    X_relevant = X[relevant_indices]
-    probabilities = model.predict_proba(input_data)[0]
+    # Predict relevant courses
+    relevant_probabilities = model.predict_proba(input_data)[0]
     
-    # Collect predicted probabilities for relevant courses
-    relevant_probabilities = []
-    for idx, prob in zip(relevant_indices, probabilities):
-        relevant_probabilities.append((idx, prob))
+    # Create a DataFrame with relevant courses and their probabilities
+    relevant_courses['Probability'] = relevant_probabilities[relevant_indices]
     
     # Sort by probabilities and get top recommendations
-    relevant_probabilities.sort(key=lambda x: x[1], reverse=True)
-    top_indices = [idx for idx, _ in relevant_probabilities[:num_recommendations]]
+    recommended_courses = relevant_courses.nlargest(num_recommendations, 'Probability')
     
     # Collect recommended courses information in a list
-    recommended_courses = []
-    for index in top_indices:
-        course = data.iloc[index]
-        recommended_courses.append({
+    recommendations = []
+    for _, course in recommended_courses.iterrows():
+        recommendations.append({
             "Course Title": course['course_title'],
             "Organization": course['course_organization'],
             "Certificate Type": label_encoders['course_Certificate_type'].inverse_transform([course['course_Certificate_type']])[0],
             "Rating": course['course_rating'],
             "Students Enrolled": course['course_students_enrolled'],
-            "Probability": probabilities[index]
+            "Probability": course['Probability']
         })
 
-    return recommended_courses
+    return recommendations
 
 # Main content area for user input
 st.subheader("Custom Recommendation:")
@@ -126,4 +126,5 @@ if st.button('Recommend'):
             st.write(f"   Rating: {course['Rating']}")
             st.write(f"   Students Enrolled: {course['Students Enrolled']}")
             st.write(f"   Probability: {course['Probability']}")
-
+    else:
+        st.write("No relevant courses found based on your input.")
