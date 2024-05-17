@@ -28,7 +28,7 @@ st.markdown(
             margin-bottom: 10px !important;
         }
         .content-text {
-            font-size: 18px !important;
+            font-size: 16px !important;
             color: #333333 !important;
             margin-bottom: 10px !important;
         }
